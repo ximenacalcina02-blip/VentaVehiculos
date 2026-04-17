@@ -2,18 +2,25 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers(); 
+
 builder.Services.AddDbContext<DbContexto>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-app.MapGet("/", () => "API VentaDeVehiculo funcionando ");
-
-app.MapControllers();
+app.MapControllers(); 
 
 app.Run();

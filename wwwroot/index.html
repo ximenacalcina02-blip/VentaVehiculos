@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Venta de Vehículos</title>
+    <link rel="stylesheet" href="Estilos.css">
+</head>
+<body>
+
+    <h1>Venta de Vehículos </h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Marca</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Forma de Pago</th>
+            </tr>
+        </thead>
+        <tbody id="tablaVentas">
+        </tbody>
+    </table>
+
+    <script>
+        fetch("http://localhost:5240/ventas")
+            .then(response => response.json())
+            .then(data => {
+                let tabla = document.getElementById("tablaVentas");
+
+                data.forEach(v => {
+                    let fila = `
+                        <tr>
+                            <td>${v.id}</td>
+                            <td>${v.cliente}</td>
+                            <td>${v.vendedor}</td>
+                            <td>${v.formaPago}</td>
+                        </tr>
+                    `;
+                    tabla.innerHTML += fila;
+                });
+            });
+    </script>
+
+</body>
+</html>
