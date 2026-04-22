@@ -1,3 +1,4 @@
+using VentaDeVehiculo.Entidades;
 public class Vendedor
 {
     public int Id { get; set; }

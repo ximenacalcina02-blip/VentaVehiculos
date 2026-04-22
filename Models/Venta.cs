@@ -1,16 +1,17 @@
-public class Venta
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace VentaDeVehiculo.Entidades
 {
-    public int Id { get; set; }
-    public DateTime Fecha { get; set; }
+    public class Venta
+    {
+        public Guid Id { get; set; }
 
-    public int ClienteId { get; set; }
-    public Cliente Cliente { get; set; } = new Cliente();
+        public Guid ClienteId { get; set; }
+        public Cliente Cliente { get; set; }
 
-    public int VendedorId { get; set; }
-    public Vendedor Vendedor { get; set; } = new Vendedor();
-    public int FormaPagoId { get; set; }
-    public FormaPago FormaPago { get; set; } = new FormaPago();
-    public List<Cuota> Cuotas { get; set; } = new List<Cuota>();
+        public Guid VehiculoId { get; set; }
+        public Vehiculo Vehiculo { get; set; }
 
-    public List<DetalleVenta> Detalles { get; set; } = new List<DetalleVenta>();
+        public DateTime Fecha { get; set; }
+    }
 }

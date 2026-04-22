@@ -1,7 +1,17 @@
-public class Cliente
+namespace VentaDeVehiculo.Entidades
 {
-    public int Id { get; set; }
-    public string Nombre { get; set; } = "";
+    public class Cliente
+    {
+        public Guid Id { get; set; }
 
-    public List<Venta> Ventas { get; set; } = new List<Venta>();
+        public string? Nombre { get; set; }
+
+        public int Ci { get; set; }
+
+        public string? Extension { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+
+        public DateTime FechaUltimaModificacion { get; set; }
+    }
 }

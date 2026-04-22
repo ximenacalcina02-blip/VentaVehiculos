@@ -1,3 +1,5 @@
+
+using VentaDeVehiculo.Entidades;
 public class DetalleVenta
 {
     public int VentaId { get; set; }
