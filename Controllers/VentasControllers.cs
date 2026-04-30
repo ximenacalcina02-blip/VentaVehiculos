@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VentaDeVehiculo.Data;
-using VentaDeVehiculo.DTO.Venta.CrearVenta;
-using VentaDeVehiculo.DTO.Venta.ListarVentas;
-using VentaDeVehiculo.Entidades;
+using VentaDeVehiculo.Models;
 
 namespace VentaDeVehiculo.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class VentasController : ControllerBase
     {
         private readonly DbContexto _contexto;
@@ -18,56 +16,72 @@ namespace VentaDeVehiculo.Controllers
             _contexto = contexto;
         }
 
-       
-        [HttpGet]
-        public async Task<ActionResult<List<ListarVentasOutput>>> GetVentas()
-        {
-            var ventas = await _contexto.Ventas
-                .Include(v => v.Cliente)
-                .Include(v => v.Vehiculo)
-                .Select(v => new ListarVentasOutput
-                {
-                    Id = v.Id,
-                    Cliente = v.Cliente.Nombre,
-                    Vehiculo = v.Vehiculo.Marca + " " + v.Vehiculo.Modelo,
-                    Fecha = v.Fecha
-                })
-                .ToListAsync();
-
-            return Ok(ventas);
-        }
-
-       
         [HttpPost]
-        public async Task<ActionResult<CrearVentaOutput>> CrearVenta([FromBody] CrearVentaInput input)
+        public async Task<IActionResult> RegistrarVenta([FromBody] VentaRequest request)
         {
-          
-            var cliente = await _contexto.Clientes.FindAsync(input.ClienteId);
-            if (cliente == null)
-                return BadRequest("Cliente no existe");
 
-            var vehiculo = await _contexto.Vehiculos.FindAsync(input.VehiculoId);
-            if (vehiculo == null)
-                return BadRequest("Vehiculo no existe");
-
-            var venta = new Venta
+            if (request == null || request.Venta == null)
             {
-                Id = Guid.NewGuid(),
-                ClienteId = input.ClienteId,
-                VehiculoId = input.VehiculoId,
-                Fecha = DateTime.UtcNow
-            };
+                return BadRequest("La información de la venta es obligatoria.");
+            }
 
-            _contexto.Ventas.Add(venta);
+
+            _contexto.Ventas.Add(request.Venta);
+            await _contexto.SaveChangesAsync(); 
+
+            if (request.Detalles != null && request.Detalles.Count > 0)
+            {
+                foreach (var item in request.Detalles)
+                {
+                    item.VentaId = request.Venta.Id; 
+                    _contexto.DetallesVentas.Add(item);
+                }
+            }
+
+
+            if (request.CantidadCuotas > 0)
+            {
+
+                decimal montoCuota = request.Venta.TotalVenta / request.CantidadCuotas;
+
+                for (int i = 1; i <= request.CantidadCuotas; i++)
+                {
+                    var nuevaCuota = new Cuotas
+                    {
+                        VentaId = request.Venta.Id,
+                        NumeroCuota = i,
+                        Monto = montoCuota,
+                        FechaVencimiento = DateTime.Now.AddMonths(i),
+                        Pagado = false
+                    };
+                    _contexto.Cuotas.Add(nuevaCuota);
+                }
+            }
+
             await _contexto.SaveChangesAsync();
 
-            return Ok(new CrearVentaOutput
-            {
-                Id = venta.Id,
-                Cliente = cliente.Nombre,
-                Vehiculo = vehiculo.Marca + " " + vehiculo.Modelo,
-                Fecha = venta.Fecha
+            return Ok(new { 
+                mensaje = "Venta registrada con éxito", 
+                idVenta = request.Venta.Id,
+                detallesRegistrados = request.Detalles?.Count ?? 0,
+                cuotasGeneradas = request.CantidadCuotas
             });
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Venta>>> GetVentas()
+        {
+            return await _contexto.Ventas.ToListAsync();
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Venta>> GetVenta(int id)
+        {
+            var venta = await _contexto.Ventas.FindAsync(id);
+            if (venta == null) return NotFound();
+            return venta;
         }
     }
 }

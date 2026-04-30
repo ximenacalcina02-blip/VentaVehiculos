@@ -1,61 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VentaDeVehiculo.Data;
-using VentaDeVehiculo.DTO.Vehiculo.AgregarVehiculo;
-using VentaDeVehiculo.DTO.Vehiculo.ListarVehiculos;
-using VentaDeVehiculo.Entidades;
+using VentaDeVehiculo.Models;
 
 namespace VentaDeVehiculo.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class VehiculosController : ControllerBase
     {
-        private readonly DbContexto _contexto;
+        private readonly DbContexto _context;
 
-        public VehiculosController(DbContexto contexto)
+        public VehiculosController(DbContexto context)
         {
-            _contexto = contexto;
+            _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ListarVehiculosOutput>>> GetVehiculos()
+        public async Task<ActionResult<IEnumerable<Vehiculo>>> GetVehiculos()
         {
-            var lista = await _contexto.Vehiculos
-                .Select(v => new ListarVehiculosOutput
-                {
-                    Id = v.Id,
-                    Marca = v.Marca,
-                    Modelo = v.Modelo,
-                    Precio = v.Precio
-                })
-                .ToListAsync();
-
-            return Ok(lista);
+            return await _context.Vehiculos.ToListAsync();
         }
 
         [HttpPost]
-        public async Task<ActionResult<AgregarVehiculoOutput>> CrearVehiculo([FromBody] AgregarVehiculoInput input)
+        public async Task<ActionResult<Vehiculo>> PostVehiculo(Vehiculo vehiculo)
         {
-            var vehiculo = new Vehiculo
-            {
-                Id = Guid.NewGuid(),
-                Marca = input.Marca,
-                Modelo = input.Modelo,
-                Precio = input.Precio,
-                FechaCreacion = DateTime.UtcNow
-            };
-
-            _contexto.Vehiculos.Add(vehiculo);
-            await _contexto.SaveChangesAsync();
-
-            return Ok(new AgregarVehiculoOutput
-            {
-                Id = vehiculo.Id,
-                Marca = vehiculo.Marca,
-                Modelo = vehiculo.Modelo,
-                Precio = vehiculo.Precio
-            });
+            _context.Vehiculos.Add(vehiculo);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetVehiculos), new { id = vehiculo.Id }, vehiculo);
         }
     }
 }

@@ -1,12 +1,15 @@
-
-using VentaDeVehiculo.Entidades;
-public class DetalleVenta
+namespace VentaDeVehiculo.Models
 {
-    public int VentaId { get; set; }
-    public Venta Venta { get; set; } = new Venta();
+    public class DetalleVenta
+    {
+        public int Id { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public int Cantidad { get; set; }
 
-    public int VehiculoId { get; set; }
-    public Vehiculo Vehiculo { get; set; } = new Vehiculo();
+        public int VentaId { get; set; }
+        public Venta? Venta { get; set; }
 
-    public int Cantidad { get; set; }
+        public int VehiculoId { get; set; }
+        public Vehiculo? Vehiculo { get; set; }
+    }
 }

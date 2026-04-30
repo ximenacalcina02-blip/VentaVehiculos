@@ -1,13 +1,16 @@
+using System;
 
-using VentaDeVehiculo.Entidades;
-public class Cuota
+namespace VentaDeVehiculo.Models
 {
-    public int Id { get; set; }
-    public int VentaId { get; set; }
-    public Venta Venta { get; set; } = new();
-    public int NumeroCuota { get; set; }
-    public DateTime FechaPago { get; set; }
-    public DateTime? FechaPagoReal { get; set; }
-    public double Monto { get; set; }
-    public bool Pagado { get; set; }
+    public class Cuotas
+    {
+        public int Id { get; set; }
+        public int NumeroCuota { get; set; }
+        public decimal Monto { get; set; }
+        public DateTime FechaVencimiento { get; set; }
+        public bool Pagado { get; set; }
+
+        public int VentaId { get; set; }
+        public Venta? Venta { get; set; }
+    }
 }

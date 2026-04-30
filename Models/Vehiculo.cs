@@ -1,15 +1,12 @@
-namespace VentaDeVehiculo.Entidades
+namespace VentaDeVehiculo.Models
 {
     public class Vehiculo
     {
-        public Guid Id { get; set; }
-
-        public string? Marca { get; set; }
-
-        public string? Modelo { get; set; }
-
+        public int Id { get; set; }
+        public string Modelo { get; set; } = string.Empty;
+        public int Anio { get; set; }
         public decimal Precio { get; set; }
-
-        public DateTime FechaCreacion { get; set; }
+        public int MarcaId { get; set; }
+        public Marca? Marca { get; set; }
     }
 }

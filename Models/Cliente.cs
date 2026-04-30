@@ -1,17 +1,10 @@
-namespace VentaDeVehiculo.Entidades
+namespace VentaDeVehiculo.Models
 {
     public class Cliente
     {
-        public Guid Id { get; set; }
-
-        public string? Nombre { get; set; }
-
-        public int Ci { get; set; }
-
-        public string? Extension { get; set; }
-
-        public DateTime FechaCreacion { get; set; }
-
-        public DateTime FechaUltimaModificacion { get; set; }
+        public int Id { get; set; }
+        public string NombreCompleto { get; set; } = string.Empty;
+        public string CI { get; set; } = string.Empty;
+        public string Telefono { get; set; } = string.Empty;
     }
 }

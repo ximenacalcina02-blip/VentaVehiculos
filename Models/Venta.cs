@@ -1,17 +1,17 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
-namespace VentaDeVehiculo.Entidades
+namespace VentaDeVehiculo.Models
 {
     public class Venta
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
+        public DateTime Fecha { get; set; } = DateTime.Now;
+        public decimal TotalVenta { get; set; }
+        
+        public int ClienteId { get; set; }
+        public Cliente? Cliente { get; set; }
 
-        public Guid ClienteId { get; set; }
-        public Cliente Cliente { get; set; }
-
-        public Guid VehiculoId { get; set; }
-        public Vehiculo Vehiculo { get; set; }
-
-        public DateTime Fecha { get; set; }
+        public int SucursalId { get; set; }
+        public Sucursal? Sucursal { get; set; }
     }
 }
